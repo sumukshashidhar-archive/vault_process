@@ -22,7 +22,7 @@ def write_files(files_content: dict, directory: str) -> None:
     for filename, content in files_content.items():
         file_path = os.path.join(directory, filename)
         try:
-            with open(file_path, 'w', encoding='utf-8') as file:
+            with open(file_path, 'w', encoding='windows-1252') as file:
                 file.write(content)
         except PermissionError:
             raise PermissionError(f"Permission denied to write to the file '{filename}'.")
@@ -55,7 +55,7 @@ def read_files(directory: str) -> dict:
         file_path = os.path.join(directory, filename)
         if os.path.isfile(file_path):
             try:
-                with open(file_path, "r", encoding="utf-8") as file:
+                with open(file_path, "r", encoding="windows-1252") as file:
                     files_content[filename] = file.read()
             except PermissionError:
                 raise PermissionError(
