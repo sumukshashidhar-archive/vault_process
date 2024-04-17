@@ -36,8 +36,9 @@ def find_wikilinks(text: str) -> Set[str]:
     return set(matches)
 
 def wikilink_unmarked(text, wikilink_set):
-    # Build a regex that matches any word in the wikilink set as a whole word, considering pre-existing wikilinks
-    words_regex = r'\b(' + '|'.join(map(re.escape, wikilink_set)) + r')\b(?!\]\])'
+    # Regex to find words that need to be wikilinked. The lookahead assertion (?![^\[]*\]\]) ensures that the word
+    # is not already within wikilinks with or without alternative text display.
+    words_regex = r'\b(' + '|'.join(map(re.escape, wikilink_set)) + r')\b(?![^\[]*\]\])'
 
     # Function to replace each match with a wikilinked version if it's not already wikilinked
     def replace_unlinked(match):
@@ -47,8 +48,11 @@ def wikilink_unmarked(text, wikilink_set):
         # Get the match start and end positions
         start, end = match.span()
         # Check if the match is already wikilinked
-        if start >= 2 and text[start-2:start] == '[[' and end + 2 <= len(text) and text[end:end+2] == ']]':
-            return word  # return as is if already wikilinked
+        if start >= 2 and text[start-2:start] == '[[':
+            if end + 2 <= len(text) and text[end:end+2] == ']]':
+                return word  # return as is if already wikilinked properly
+            if text[start-3:start] == '|[[' and text[end:end+3] == ']]|]':
+                return word  # Special case for piped wikilinks which are within another wikilink
         return wikilinked_word  # return wikilinked word
 
     # Substitute occurrences of the words with the replace function
