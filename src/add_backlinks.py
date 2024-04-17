@@ -11,7 +11,9 @@ from src.utils.fileops import read_files, write_files
 
 import re
 from typing import Set
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 
 
 VAULT = os.environ["VAULT"]
@@ -67,6 +69,9 @@ if __name__ == "__main__":
         file_content = files[filename]
         wikilink_set = find_wikilinks(file_content)
         modified_text = wikilink_unmarked(file_content, wikilink_set)
+        if modified_text != file_content:
+            logging.debug(f"Modified file: {filename}")
         files[filename] = modified_text
     # Write the modified files back to the vault
+    
     write_files(files, VAULT)
