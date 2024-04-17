@@ -1,4 +1,7 @@
 import os
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 def write_files(files_content: dict, directory: str) -> None:
     """
@@ -61,8 +64,13 @@ def read_files(directory: str) -> dict:
                 with open(file_path, "r", encoding="windows-1252") as file:
                     files_content[relative_path] = (file.read(), "windows-1252")
             except UnicodeDecodeError:
-                with open(file_path, "r", encoding="utf-8") as file:
-                    files_content[relative_path] = (file.read(), "utf-8")
+                try:
+                    with open(file_path, "r", encoding="utf-8") as file:
+                        files_content[relative_path] = (file.read(), "utf-8")
+                except UnicodeDecodeError:
+                    logging.error(f"Unable to read file '{relative_path}': UnicodeDecodeError")
+                    # Skip files that cannot be decoded
+                    continue
             except PermissionError:
                 raise PermissionError(
                     f"Permission denied to read the file '{relative_path}'."
