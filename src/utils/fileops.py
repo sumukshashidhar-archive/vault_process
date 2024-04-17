@@ -27,7 +27,7 @@ def write_files(files_content: dict, directory: str) -> None:
         try:
             encoding = content[1]
             with open(file_path, 'w', encoding=encoding) as file:
-                file.write(content)
+                file.write(content[0])
         except PermissionError:
             raise PermissionError(f"Permission denied to write to the file '{filename}'.")
         except IOError as e:
