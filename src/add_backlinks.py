@@ -38,9 +38,12 @@ def find_wikilinks(text: str) -> Set[str]:
     return set(matches)
 
 def wikilink_unmarked(text, wikilink_set):
+    # Filter the wikilink_set to include only words that are 3 or more characters long
+    filtered_wikilink_set = {word for word in wikilink_set if len(word) >= 3}
+    
     # Regex to find words that need to be wikilinked. The lookahead assertion (?![^\[]*\]\]) ensures that the word
     # is not already within wikilinks with or without alternative text display.
-    words_regex = r'\b(' + '|'.join(map(re.escape, wikilink_set)) + r')\b(?![^\[]*\]\])'
+    words_regex = r'\b(' + '|'.join(map(re.escape, filtered_wikilink_set)) + r')\b(?![^\[]*\]\])'
 
     # Function to replace each match with a wikilinked version if it's not already wikilinked
     def replace_unlinked(match):
