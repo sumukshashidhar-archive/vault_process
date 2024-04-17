@@ -65,6 +65,7 @@ def wikilink_unmarked(text, wikilink_set):
 if __name__ == "__main__":
     # Read all files in the vault
     files = read_files(VAULT)
+    logging.debug(f"Length of files: {len(files)}")
     for filename in files:
         file_content = files[filename]
         wikilink_set = find_wikilinks(file_content)
