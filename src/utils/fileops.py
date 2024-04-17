@@ -34,7 +34,7 @@ def write_files(files_content: dict, directory: str) -> None:
             raise IOError(f"Unable to write to file '{filename}': {e}")
 
 
-def read_files(directory: str, ignore_dirs = ['.obsidian', '.git', '.stversions']) -> dict:
+def read_files(directory: str, ignore_dirs = ['.obsidian', '.git', '.stversions', '.trash', '@eaDir']) -> dict:
     """
     Recursively reads all files in the specified directory and all subdirectories,
     and returns a dictionary where each key is the filename and the value is the
