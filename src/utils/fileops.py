@@ -34,7 +34,7 @@ def write_files(files_content: dict, directory: str) -> None:
             raise IOError(f"Unable to write to file '{filename}': {e}")
 
 
-def read_files(directory: str) -> dict:
+def read_files(directory: str, ignore_dirs = ['.obsidian', '.git', '.stversions']) -> dict:
     """
     Recursively reads all files in the specified directory and all subdirectories,
     and returns a dictionary where each key is the filename and the value is the
@@ -57,6 +57,12 @@ def read_files(directory: str) -> dict:
 
     files_content = {}
     for root, _, files in os.walk(directory):
+        
+        # Skip directories in ignore_dirs
+        if ignore_dirs and any(ignore_dir in root for ignore_dir in ignore_dirs):
+            logging.debug(f"Skipping directory: {root}")
+            continue
+        
         for filename in files:
             file_path = os.path.join(root, filename)
             relative_path = os.path.relpath(file_path, start=directory)
