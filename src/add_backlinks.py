@@ -72,7 +72,7 @@ if __name__ == "__main__":
         modified_text = wikilink_unmarked(file_content, wikilink_set)
         if modified_text != file_content:
             logging.debug(f"Modified file: {filename}")
-        files[filename][0] = modified_text
+        files[filename] = modified_text, files[filename][1]
     # Write the modified files back to the vault
     
     write_files(files, VAULT)
