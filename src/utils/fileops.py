@@ -32,14 +32,15 @@ def write_files(files_content: dict, directory: str) -> None:
 
 def read_files(directory: str) -> dict:
     """
-    Reads all files in the specified directory and returns a dictionary where each
-    key is the filename and the value is the content of that file.
+    Recursively reads all files in the specified directory and all subdirectories,
+    and returns a dictionary where each key is the filename and the value is the
+    content of that file. Filenames are prefixed with their relative path for uniqueness.
 
     Args:
         directory (str): The path to the directory from which to read files.
 
     Returns:
-        dict: A dictionary with filenames as keys and file contents as values.
+        dict: A dictionary with filenames as keys (including their relative paths) and file contents as values.
 
     Raises:
         FileNotFoundError: If the specified directory does not exist.
@@ -51,17 +52,18 @@ def read_files(directory: str) -> dict:
         raise NotADirectoryError(f"The path '{directory}' is not a directory.")
 
     files_content = {}
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        if os.path.isfile(file_path):
+    for root, _, files in os.walk(directory):
+        for filename in files:
+            file_path = os.path.join(root, filename)
+            relative_path = os.path.relpath(file_path, start=directory)
             try:
                 with open(file_path, "r", encoding="windows-1252") as file:
-                    files_content[filename] = file.read()
+                    files_content[relative_path] = file.read()
             except PermissionError:
                 raise PermissionError(
-                    f"Permission denied to read the file '{filename}'."
+                    f"Permission denied to read the file '{relative_path}'."
                 )
             except IOError as e:
-                print(f"Unable to read file '{filename}': {e}")
+                print(f"Unable to read file '{relative_path}': {e}")
 
     return files_content
